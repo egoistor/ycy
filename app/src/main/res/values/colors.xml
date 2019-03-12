@@ -3,4 +3,12 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+    <color name="mycolor">#303030</color>
+    <color name="popupmenu">#8E8E8E</color>
+    <color name="fengexian">	#B3B3B3</color>
+    <color name="red">#ce3c3d</color>
+
+
+    <color name="white">#FFFFFF</color>
+    <color name="green">#66CD00</color>
 </resources>
