@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.EditActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/title_activity_edit" />
+
+        <EditText
+            android:id="@+id/activity_edit_editText"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:hint="记录你的想法"/>
+
+        <ImageView
+            android:id="@+id/gallery_button"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="10dp"
+            android:clickable="true" />
+
+
+        <Button
+            android:id="@+id/activity_edit_chooseType"
+            android:layout_width="match_parent"
+            android:text="谁可以看"
+            android:layout_height="wrap_content" />
+
+
+    </LinearLayout>
+
+
+</android.support.design.widget.CoordinatorLayout>
