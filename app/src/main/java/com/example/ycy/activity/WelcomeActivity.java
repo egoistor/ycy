@@ -7,6 +7,7 @@ import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.avos.avoscloud.AVUser;
 import com.example.ycy.R;
 
 public class WelcomeActivity extends BaseActivity {
@@ -20,8 +21,14 @@ public class WelcomeActivity extends BaseActivity {
     }
 
     private void goHome(){
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        if (AVUser.getCurrentUser() == null){
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+
         finish();
     }
 

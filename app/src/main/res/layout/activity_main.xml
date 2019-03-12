@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
+
     <android.support.v4.view.ViewPager
         android:id="@+id/content_viewpager"
         android:layout_width="match_parent"
@@ -26,5 +27,9 @@
         </android.support.design.widget.TabLayout>
 
     </android.support.v4.view.ViewPager>
+
+        <!--android:id="@+id/begin"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content" />-->
 
 </android.support.constraint.ConstraintLayout>

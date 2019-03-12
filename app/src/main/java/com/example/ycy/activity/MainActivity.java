@@ -1,5 +1,6 @@
 package com.example.ycy.activity;
 
+
 import android.animation.ArgbEvaluator;
 import android.graphics.Color;
 import android.os.Handler;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.content.Intent;
+import android.widget.Button;
 
 import com.example.ycy.R;
 import com.example.ycy.adapter.MyFragmentPagerAdapter;
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         init();
     }
 
@@ -135,5 +139,14 @@ public class MainActivity extends AppCompatActivity {
             textViewFrom.setTextColor(unselectedcolor);
         }
 
+
+//        Button button = findViewById(R.id.begin);
+//        button.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+//                startActivity(intent);
+//            }
+//        });
     }
 }
