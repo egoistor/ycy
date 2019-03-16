@@ -11,7 +11,7 @@
 
     <Button
         android:text="发表"
-        android:id="@+id/activity_edit_finish"
+        android:id="@+id/activity_edit_post"
         android:layout_width="80dp"
         android:layout_marginRight="0dp"
         android:layout_weight="1"

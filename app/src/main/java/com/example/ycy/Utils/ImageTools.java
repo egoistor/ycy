@@ -1,4 +1,4 @@
-package com.example.ycy.Utils;
+package com.example.ycy.utils;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

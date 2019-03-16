@@ -39,7 +39,7 @@
             android:layout_marginRight="10dp"
             android:textColor="@color/white"
             android:textColorHint="@color/white"
-            android:hint="手机号/用户名"/>
+            android:hint="用户名"/>
     </android.support.design.widget.TextInputLayout>
 
 

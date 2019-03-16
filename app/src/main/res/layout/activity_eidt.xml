@@ -1,40 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.EditActivity">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/edit_title_rl"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
-        <include layout="@layout/title_activity_edit" />
+        <LinearLayout
+            android:id="@+id/edit_title"
+            android:layout_margin="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true">
+
+            <ImageButton
+                android:background="@drawable/back_24"
+                android:id="@+id/activity_edit_back"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_marginLeft="5dp"
+                android:text="记录我与超越的点点滴滴"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+        </LinearLayout>
+
+        <Button
+            android:text="发表"
+            android:id="@+id/activity_edit_post"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/green_corner_button" />
+
+    </RelativeLayout>
+
+
+        <EditText
+            android:id="@+id/activity_edit_edittitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edittext_grayline"
+            android:gravity="top|left"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:maxLines="1"
+            android:hint="标题"
+            android:layout_below="@+id/edit_title_rl" />
 
         <EditText
             android:id="@+id/activity_edit_editText"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:hint="记录你的想法"/>
+            android:background="@drawable/edittext_grayline"
+            android:gravity="top|left"
+            android:layout_margin="10dp"
+            android:padding="5dp"
+            android:hint="记录你的想法"
+            android:layout_below="@+id/activity_edit_edittitle" />
 
-        <ImageView
-            android:id="@+id/gallery_button"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_marginTop="10dp"
-            android:clickable="true" />
+    <ImageView
+        android:id="@+id/gallery_button"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/edittext_add"
+        android:layout_margin="10dp"
+        android:layout_below="@+id/activity_edit_editText"
+        android:clickable="true" />
 
 
-        <Button
-            android:id="@+id/activity_edit_chooseType"
-            android:layout_width="match_parent"
-            android:text="谁可以看"
-            android:layout_height="wrap_content" />
 
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/gallery_button"
+        android:layout_alignParentRight="true">
+
+        <TextView
+            android:text="是否公开"
+            android:layout_toStartOf="@+id/activity_edit_isopen_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"/>
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/activity_edit_isopen_btn"
+            android:layout_width="50dp"
+            android:layout_height="25dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingEnd="8dp"
+            android:paddingRight="3dp"
+            android:thumb="@drawable/switch_custom_thumb_selector"
+            app:track="@drawable/switch_custom_track_selector"/>
 
     </LinearLayout>
 
 
-</android.support.design.widget.CoordinatorLayout>
+</RelativeLayout>
