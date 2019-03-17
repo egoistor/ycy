@@ -9,6 +9,7 @@ import com.avos.avoscloud.AVException;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
+import com.avos.avoscloud.DeleteCallback;
 import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
@@ -135,11 +136,11 @@ public class EventLab {
             }
         });
     }
-    public static void deleteEvent(final Event event){
-        AVQuery<AVObject> avQuery = new AVQuery<>("Event");
-        avQuery.getInBackground(event.getId(), new GetCallback<AVObject>() {
+    public static void deleteEvent(final Event event, final Handler handler){
+        final AVObject eventDelet = AVObject.createWithoutData("Event", event.getId());
+        eventDelet.deleteInBackground(new DeleteCallback() {
             @Override
-            public void done(AVObject avObject, AVException e) {
+            public void done( AVException e) {
                 if (e == null){
                     for (int i = 0; i < mEvents.size();i++){
                         if (mEvents.get(i).getId().equals(event.getId()))
@@ -148,6 +149,7 @@ public class EventLab {
                             break;
                         }
                     }
+                    handler.sendEmptyMessage(0);
                     Toast.makeText(mContext,"删除成功",Toast.LENGTH_SHORT).show();
                 }else {
                     Toast.makeText(mContext,"网络异常，请稍后",Toast.LENGTH_SHORT).show();

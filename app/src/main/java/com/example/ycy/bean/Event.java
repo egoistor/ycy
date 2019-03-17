@@ -1,33 +1,29 @@
 package com.example.ycy.bean;
 
+import android.os.Parcelable;
+
 import com.avos.avoscloud.AVUser;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Event {
+public class Event implements Serializable {
     private String id;
     private String title;
     private String detail;
     private Date creatTime;
-    private boolean isopen;
+    private boolean open;
     private AVUser owner;
 
-    public Event(String id,String title, String detail, Date creatTime,boolean isopen,AVUser owner) {
+    public Event(String id,String title, String detail, Date creatTime,boolean open,AVUser owner) {
         this.id = id;
         this.title = title;
         this.detail = detail;
         this.creatTime = creatTime;
-        this.isopen = isopen;
+        this.open = open;
         this.owner = owner;
     }
 
-    public AVUser getOwner() {
-        return owner;
-    }
-
-    public void setOwner(AVUser owner) {
-        this.owner = owner;
-    }
 
     public String getId() {
         return id;
@@ -62,10 +58,18 @@ public class Event {
     }
 
     public boolean isOpen() {
-        return isopen;
+        return open;
     }
 
     public void setOpen(boolean open) {
-        this.isopen = open;
+        this.open = open;
+    }
+
+    public AVUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(AVUser owner) {
+        this.owner = owner;
     }
 }

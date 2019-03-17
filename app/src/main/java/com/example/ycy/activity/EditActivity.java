@@ -1,6 +1,7 @@
 package com.example.ycy.activity;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -15,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +34,7 @@ import com.example.ycy.bean.Event;
 import com.example.ycy.bean.EventLab;
 import com.example.ycy.utils.ImageTools;
 import com.example.ycy.utils.OpenAlbumUtil;
+import com.example.ycy.utils.ShowPopUtil;
 
 
 import java.io.File;
@@ -50,14 +53,17 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
     private String str = "";
     private ImageButton mBackButton;
     private Button mPostButton;
+    private Button mDeleButton;
     private EditText mEditTitle;
     private EditText mEditDetail;
     private SwitchCompat mSwitch;
-    private static String EXTRA_EVENT = "EXTRA_EVENT";
-    private static String TYPE = "type";
-    private static int TYPE_NEW = 0; //新建
-    private static int TYPE_CHANGE = 1; //修改
+    public static String EXTRA_EVENT = "EXTRA_EVENT";
+    public static String TYPE = "type";
+    public static int TYPE_NEW = 0; //新建
+    public static int TYPE_CHANGE = 1; //修改
     private  int currentType;
+
+    private String id;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,36 +73,52 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
 
     private void initView() {
         currentType = getIntent().getIntExtra(TYPE,0);
+        imageView = findViewById(R.id.gallery_button);
+        mBackButton = findViewById(R.id.activity_edit_back);
+        mPostButton = findViewById(R.id.activity_edit_post);
+        mSwitch = findViewById(R.id.activity_edit_isopen_btn);
+        mBackButton = findViewById(R.id.activity_edit_back);
+        mPostButton = findViewById(R.id.activity_edit_post);
+        mDeleButton = findViewById(R.id.activity_edit_dele);
+        mEditTitle = findViewById(R.id.activity_edit_edittitle);
+        mEditDetail = findViewById(R.id.activity_edit_editdetail);
+
 
         if (currentType == TYPE_CHANGE){
-            Event event = (Event) getIntent().getSerializableExtra(EXTRA_EVENT);
+            id = getIntent().getStringExtra("id");
+            Intent intent = getIntent();
+            Event event = new Event(intent.getStringExtra("id"),
+                                    intent.getStringExtra("title"),
+                                    intent.getStringExtra("detail"),
+                                    new Date(intent.getLongExtra("create",System.currentTimeMillis())),
+                                    intent.getBooleanExtra("isopen",false),
+                                    (AVUser) intent.getParcelableExtra("owner"));
+
+
             mEditTitle.setText(event.getTitle());
             mEditDetail.setText(event.getDetail());
             mSwitch.setChecked(event.isOpen());
+            mPostButton.setText("修改");
+        }else {
+            mDeleButton.setVisibility(View.GONE);
         }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        imageView = findViewById(R.id.gallery_button);
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 OpenAlbumUtil.openAlbum(EditActivity.this);
             }
         });
-        mBackButton = findViewById(R.id.activity_edit_back);
-        mPostButton = findViewById(R.id.activity_edit_post);
-        mSwitch = findViewById(R.id.activity_edit_isopen_btn);
-        mBackButton = findViewById(R.id.activity_edit_back);
-        mPostButton = findViewById(R.id.activity_edit_post);
-        mEditTitle = findViewById(R.id.activity_edit_edittitle);
-        mEditDetail = findViewById(R.id.activity_edit_editdetail);
+
 
 
         mBackButton.setOnClickListener(this);
         mPostButton.setOnClickListener(this);
+        mDeleButton.setOnClickListener(this);
 
     }
 
@@ -214,13 +236,48 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.activity_edit_post:
-                if (currentType == TYPE_NEW){
-                    Event event = new Event(null,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(), AVUser.getCurrentUser());
-                    EventLab.addEvent(event,handler1);
-                }else {
-                    Event event = new Event(((Event) getIntent().getSerializableExtra(EXTRA_EVENT)).getId(),mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(),AVUser.getCurrentUser());
-                    EventLab.updateEvent(event,handler1);
-                }
+                ShowPopUtil.showPop(this,"确定修改", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        switch (view.getId()) {
+                            case R.id.tv_album:
+                                if (currentType == TYPE_NEW){
+                                    Event event = new Event(null,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(), AVUser.getCurrentUser());
+                                    EventLab.addEvent(event,handler1);
+                                }else {
+                                    Event event = new Event(id,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(),AVUser.getCurrentUser());
+                                    EventLab.updateEvent(event,handler1);
+                                }
+                                break;
+
+                            case R.id.tv_cancel:
+                                //取消
+                                //closePopupWindow();
+                                break;
+                        }
+                          ShowPopUtil.closePopupWindow();
+                        }
+                });
+                break;
+            case R.id.activity_edit_dele:
+                ShowPopUtil.showPop(this,"确定删除", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        switch (view.getId()) {
+                            case R.id.tv_album:
+                                Event event = new Event(id,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(),AVUser.getCurrentUser());
+                                EventLab.deleteEvent(event,handler1);
+                                break;
+                            case R.id.tv_cancel:
+                                //取消
+                                //closePopupWindow();
+                                break;
+                        }
+                        ShowPopUtil.closePopupWindow();
+                    }
+                });
                 break;
 
         }
