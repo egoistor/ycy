@@ -28,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.avos.avoscloud.AVUser;
 import com.example.ycy.R;
@@ -239,16 +240,19 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.activity_edit_post:
+                if (mEditTitle.getText().length() == 0 || mEditDetail.getText().length() ==0){
+                    Toast.makeText(EditActivity.this,"题目和内容不能为空",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 String str;
                 if (currentType == TYPE_NEW){
                     str = "确定发表";
                 }else {
                     str = "确定修改";
                 }
-                ShowPopUtil.showPop(this,"确定修改", new View.OnClickListener() {
+                ShowPopUtil.showPop(this,str, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
                         switch (view.getId()) {
                             case R.id.tv_album:
                                 if (currentType == TYPE_NEW){
