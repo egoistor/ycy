@@ -22,6 +22,7 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -35,6 +36,7 @@ import com.example.ycy.bean.EventLab;
 import com.example.ycy.utils.ImageTools;
 import com.example.ycy.utils.OpenAlbumUtil;
 import com.example.ycy.utils.ShowPopUtil;
+import com.example.ycy.utils.SoftKeyboardUtil;
 
 
 import java.io.File;
@@ -231,11 +233,18 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
+        SoftKeyboardUtil.hideSoftKeyboard(this);
         switch (v.getId()){
             case R.id.activity_edit_back:
                 finish();
                 break;
             case R.id.activity_edit_post:
+                String str;
+                if (currentType == TYPE_NEW){
+                    str = "确定发表";
+                }else {
+                    str = "确定修改";
+                }
                 ShowPopUtil.showPop(this,"确定修改", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
