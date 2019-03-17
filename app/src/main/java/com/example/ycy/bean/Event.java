@@ -1,5 +1,7 @@
 package com.example.ycy.bean;
 
+import com.avos.avoscloud.AVUser;
+
 import java.util.Date;
 
 public class Event {
@@ -8,13 +10,23 @@ public class Event {
     private String detail;
     private Date creatTime;
     private boolean isopen;
+    private AVUser owner;
 
-    public Event(String id,String title, String detail, Date creatTime,boolean isopen) {
+    public Event(String id,String title, String detail, Date creatTime,boolean isopen,AVUser owner) {
         this.id = id;
         this.title = title;
         this.detail = detail;
         this.creatTime = creatTime;
         this.isopen = isopen;
+        this.owner = owner;
+    }
+
+    public AVUser getOwner() {
+        return owner;
+    }
+
+    public void setOwner(AVUser owner) {
+        this.owner = owner;
     }
 
     public String getId() {

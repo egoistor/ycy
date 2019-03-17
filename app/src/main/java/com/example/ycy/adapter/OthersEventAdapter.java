@@ -1,7 +1,6 @@
 package com.example.ycy.adapter;
 
 import android.content.Context;
-
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.avos.avoscloud.AVUser;
 import com.example.ycy.R;
 import com.example.ycy.bean.Event;
 
@@ -18,11 +16,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
-public class EventAdapter extends RecyclerView.Adapter {
+public class OthersEventAdapter extends RecyclerView.Adapter {
     private List<Event> events;
     private Context context;
     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public EventAdapter(List<Event> events, Context context) {
+    public OthersEventAdapter(List<Event> events, Context context) {
         this.events = events;
         this.context = context;
     }
@@ -30,13 +28,13 @@ public class EventAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        return new EventHolder(LayoutInflater.from(context),viewGroup);
+        return new OthersEventHolder(LayoutInflater.from(context),viewGroup);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
         Event note = events.get(i);
-        ((EventHolder)viewHolder).bind(note);
+        ((OthersEventHolder)viewHolder).bind(note);
     }
 
     @Override
@@ -48,12 +46,12 @@ public class EventAdapter extends RecyclerView.Adapter {
         this.events = events;
     }
 
-    private class EventHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    private class OthersEventHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private TextView eventTitle;
         private TextView eventDetail;
         private TextView eventCreateTime;
         private Event event;
-        public EventHolder(LayoutInflater inflater, ViewGroup parent) {
+        public OthersEventHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.event_item,parent,false));
             itemView.setOnClickListener(this);
             eventTitle = itemView.findViewById(R.id.event_title);

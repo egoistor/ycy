@@ -9,6 +9,8 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,11 +21,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 
+import com.avos.avoscloud.AVUser;
 import com.example.ycy.R;
+import com.example.ycy.bean.Event;
+import com.example.ycy.bean.EventLab;
 import com.example.ycy.utils.ImageTools;
 import com.example.ycy.utils.OpenAlbumUtil;
 
@@ -33,7 +39,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class EditActivity extends BaseActivity {
+public class EditActivity extends BaseActivity implements View.OnClickListener {
 
     private static final int PHOTO_FROM_GALLERY = 1;
     private static final int PHOTO_FROM_CAMERA = 2;
@@ -44,17 +50,31 @@ public class EditActivity extends BaseActivity {
     private String str = "";
     private ImageButton mBackButton;
     private Button mPostButton;
+    private EditText mEditTitle;
+    private EditText mEditDetail;
     private SwitchCompat mSwitch;
-
+    private static String EXTRA_EVENT = "EXTRA_EVENT";
+    private static String TYPE = "type";
+    private static int TYPE_NEW = 0; //新建
+    private static int TYPE_CHANGE = 1; //修改
+    private  int currentType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_eidt);
-
         initView();
     }
 
-    public void initView() {
+    private void initView() {
+        currentType = getIntent().getIntExtra(TYPE,0);
+
+        if (currentType == TYPE_CHANGE){
+            Event event = (Event) getIntent().getSerializableExtra(EXTRA_EVENT);
+            mEditTitle.setText(event.getTitle());
+            mEditDetail.setText(event.getDetail());
+            mSwitch.setChecked(event.isOpen());
+        }
+
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -69,7 +89,18 @@ public class EditActivity extends BaseActivity {
         mBackButton = findViewById(R.id.activity_edit_back);
         mPostButton = findViewById(R.id.activity_edit_post);
         mSwitch = findViewById(R.id.activity_edit_isopen_btn);
+        mBackButton = findViewById(R.id.activity_edit_back);
+        mPostButton = findViewById(R.id.activity_edit_post);
+        mEditTitle = findViewById(R.id.activity_edit_edittitle);
+        mEditDetail = findViewById(R.id.activity_edit_editdetail);
+
+
+        mBackButton.setOnClickListener(this);
+        mPostButton.setOnClickListener(this);
+
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -174,5 +205,34 @@ public class EditActivity extends BaseActivity {
         editor.clear();
         editor.commit();
     }
+
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.activity_edit_back:
+                finish();
+                break;
+            case R.id.activity_edit_post:
+                if (currentType == TYPE_NEW){
+                    Event event = new Event(null,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(), AVUser.getCurrentUser());
+                    EventLab.addEvent(event,handler1);
+                }else {
+                    Event event = new Event(((Event) getIntent().getSerializableExtra(EXTRA_EVENT)).getId(),mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(),AVUser.getCurrentUser());
+                    EventLab.updateEvent(event,handler1);
+                }
+                break;
+
+        }
+    }
+
+    Handler handler1 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0){
+                finish();
+            }
+        }
+    };
 
 }

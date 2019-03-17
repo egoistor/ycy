@@ -4,17 +4,23 @@ package com.example.ycy.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.example.ycy.R;
 import com.example.ycy.activity.EditActivity;
@@ -31,7 +37,7 @@ import java.util.UUID;
  * A simple {@link Fragment} subclass.
  */
 public class FirstFragment extends Fragment {
-
+    private static String TAG = "FirstFragment";
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
     private static List<Event> events;
@@ -63,7 +69,7 @@ public class FirstFragment extends Fragment {
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //优化item固定大小
-        mRecyclerView.setHasFixedSize(true);
+      //  mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addOnScrollListener(new CustomRecyclerScrollViewListener() {
             @Override
             public void show() {
@@ -73,7 +79,7 @@ public class FirstFragment extends Fragment {
             @Override
             public void hide() {
 
-                FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mFloatingActionButton.getLayoutParams();
+                RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams) mFloatingActionButton.getLayoutParams();
                 int fabMargin = lp.bottomMargin;
                 mFloatingActionButton.animate().translationY(mFloatingActionButton.getHeight() + fabMargin).setInterpolator(new AccelerateInterpolator(2.0f)).start();
             }
@@ -94,12 +100,23 @@ public class FirstFragment extends Fragment {
     }
 
     void update(){
-        events = EventLab.get(getContext()).getmEvent();
+        events =  EventLab.get(getContext()).getEvents();
+        EventLab.get(getContext()).getMyEventFormNet(handler);
         if (adapter == null)
             adapter = new EventAdapter(events,getContext());
         mRecyclerView.setAdapter(adapter);
-        adapter.setEvents(events);
-        adapter.notifyDataSetChanged();
+
     }
+
+    Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0){
+                events =  EventLab.get(getContext()).getEvents();
+                adapter.setEvents(events);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    };
 
 }
