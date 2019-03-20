@@ -8,13 +8,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -22,15 +25,18 @@ import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Switch;
 import android.widget.Toast;
 
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVUser;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.ycy.R;
 import com.example.ycy.bean.Event;
 import com.example.ycy.bean.EventLab;
@@ -42,11 +48,13 @@ import com.example.ycy.utils.SoftKeyboardUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class EditActivity extends BaseActivity implements View.OnClickListener {
-
+    private static final String TAG = "EditActivity";
     private static final int PHOTO_FROM_GALLERY = 1;
     private static final int PHOTO_FROM_CAMERA = 2;
     private ImageView imageView;
@@ -55,6 +63,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
     private Date date;
     private String str = "";
     private ImageButton mBackButton;
+    private ImageView mPic;
     private Button mPostButton;
     private Button mDeleButton;
     private EditText mEditTitle;
@@ -64,9 +73,11 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
     public static String TYPE = "type";
     public static int TYPE_NEW = 0; //新建
     public static int TYPE_CHANGE = 1; //修改
+    public static int TYPE_VIEW = 2; //查看
     private  int currentType;
-
+    private Uri picUri = null;
     private String id;
+    private String path;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,9 +96,11 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
         mDeleButton = findViewById(R.id.activity_edit_dele);
         mEditTitle = findViewById(R.id.activity_edit_edittitle);
         mEditDetail = findViewById(R.id.activity_edit_editdetail);
+        mPic = findViewById(R.id.edit_pic);
 
+        mPic.setVisibility(View.GONE);
 
-        if (currentType == TYPE_CHANGE){
+        if (currentType == TYPE_CHANGE || currentType == TYPE_VIEW){
             id = getIntent().getStringExtra("id");
             Intent intent = getIntent();
             Event event = new Event(intent.getStringExtra("id"),
@@ -102,21 +115,25 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
             mEditDetail.setText(event.getDetail());
             mSwitch.setChecked(event.isOpen());
             mPostButton.setText("修改");
-        }else {
+
+            EventLab.getPic(intent.getStringExtra("id"),handlerPic);
+        }
+
+        if (currentType == TYPE_NEW){
             mDeleButton.setVisibility(View.GONE);
+        }else if (currentType == TYPE_VIEW){
+            mPostButton.setVisibility(View.GONE);
+            mDeleButton.setVisibility(View.GONE);
+            mPic.setClickable(false);
+            imageView.setClickable(false);
         }
 
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                OpenAlbumUtil.openAlbum(EditActivity.this);
-            }
-        });
-
+        imageView.setOnClickListener(this);
+        mPic.setOnClickListener(this);
 
 
         mBackButton.setOnClickListener(this);
@@ -136,9 +153,32 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                 //第二层switch
                 switch (resultCode) {
                     case RESULT_OK:
+                        if (Build.VERSION.SDK_INT >= 19) {
+                            path = OpenAlbumUtil.handleImageOnKitKat(this,data);
+                        } else {
+                            path = OpenAlbumUtil.handleImageBeforeKitKat(this,data);
+                        }
+          //              mPic.setImageURI(data.getData());
+                        Log.d(TAG, "path: " + path);
+//                        if (!"".equals(path)) {
+//                            File file = new File(path);
+//                            Uri cropUri;
+//                            if (Build.VERSION.SDK_INT >= 24) {
+//                                cropUri = FileProvider.getUriForFile(this,
+//                                        "com.fzu.fzuxiaoyoutong.provider", file);
+//                            } else {
+//                                cropUri = Uri.fromFile(file);
+//                            }
+//                            cropPhoto(cropUri);
+//                        }
                         if (data != null) {
+                            //todo 添加图片
                             Uri uri = data.getData();
-                            imageView.setImageURI(uri);
+                            Log.d(TAG, "onActivityResult: " + uri.toString());
+                            picUri = uri;
+                            mPic.setImageURI(uri);
+                            mPic.setVisibility(View.VISIBLE);
+                            imageView.setVisibility(View.GONE);
                         }
                         break;
                     case RESULT_CANCELED:
@@ -244,6 +284,10 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                     Toast.makeText(EditActivity.this,"题目和内容不能为空",Toast.LENGTH_SHORT).show();
                     break;
                 }
+                else if (mEditTitle.getText().length() > 20){
+                    Toast.makeText(EditActivity.this,"题目不能超过20个字",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 String str;
                 if (currentType == TYPE_NEW){
                     str = "确定发表";
@@ -257,10 +301,10 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                             case R.id.tv_album:
                                 if (currentType == TYPE_NEW){
                                     Event event = new Event(null,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(), AVUser.getCurrentUser());
-                                    EventLab.addEvent(event,handler1);
+                                    EventLab.addEvent(event,handler1,path);
                                 }else {
                                     Event event = new Event(id,mEditTitle.getText().toString(),mEditDetail.getText().toString(),new Date(),mSwitch.isChecked(),AVUser.getCurrentUser());
-                                    EventLab.updateEvent(event,handler1);
+                                    EventLab.updateEvent(event,handler1,path);
                                 }
                                 break;
 
@@ -292,6 +336,10 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                     }
                 });
                 break;
+            case R.id.gallery_button:
+            case R.id.edit_pic:
+                OpenAlbumUtil.openAlbum(EditActivity.this);
+                break;
 
         }
     }
@@ -301,6 +349,20 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             if (msg.what == 0){
                 finish();
+            }
+        }
+    };
+
+    Handler handlerPic = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0){
+                imageView.setVisibility(View.GONE);
+                mPic.setVisibility(View.VISIBLE);
+                Log.d(TAG, "url: " + (String)msg.obj);
+              //  RequestOptions options = new RequestOptions();
+             //   options.error(R.drawable.login_bg);
+               Glide.with(EditActivity.this).load(msg.obj).into(mPic);
             }
         }
     };

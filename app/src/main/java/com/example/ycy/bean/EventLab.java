@@ -1,11 +1,15 @@
 package com.example.ycy.bean;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Handler;
+import android.os.Message;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
+import com.avos.avoscloud.AVFile;
 import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVQuery;
 import com.avos.avoscloud.AVUser;
@@ -14,7 +18,9 @@ import com.avos.avoscloud.FindCallback;
 import com.avos.avoscloud.GetCallback;
 import com.avos.avoscloud.SaveCallback;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class EventLab {
@@ -114,12 +120,23 @@ public class EventLab {
 
     }
 
-    public static void addEvent(final Event event, final Handler handler){
+    public static void addEvent(final Event event, final Handler handler, String path){
         AVObject eventSave = new AVObject("Event");// 构建对象
         eventSave.put("title", event.getTitle());// 设置名称
         eventSave.put("detail", event.getDetail());// 设置优先级
         eventSave.put("isopen",event.isOpen());
         eventSave.put("owner",event.getOwner());
+        if (path != null){
+            AVFile file = null;
+            try {
+                file = AVFile.withAbsoluteLocalPath("LeanCloud.png", path);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Toast.makeText(mContext,"找不到图片",Toast.LENGTH_SHORT).show();
+            }
+            eventSave.put("pic", file);
+        }
+
         eventSave.saveInBackground(new SaveCallback() {// 保存到服务端
             @Override
             public void done(AVException e) {
@@ -158,7 +175,7 @@ public class EventLab {
         });
     }
 
-    public static void updateEvent(final Event event, final Handler handler){
+    public static void updateEvent(final Event event, final Handler handler,final String path){
         AVQuery<AVObject> avQuery = new AVQuery<>("Event");
         avQuery.getInBackground(event.getId(), new GetCallback<AVObject>() {
             @Override
@@ -167,6 +184,17 @@ public class EventLab {
                     avObject.put("title", event.getTitle());// 设置名称
                     avObject.put("detail", event.getDetail());// 设置优先级
                     avObject.put("isopen",event.isOpen());
+                    if (path != null){
+                        AVFile file = null;
+                        try {
+                            Log.d(TAG, "done: " + path);
+                            file = AVFile.withAbsoluteLocalPath("LeanCloud.png", path);
+                        } catch (FileNotFoundException fe) {
+                            fe.printStackTrace();
+                            Toast.makeText(mContext,"找不到图片",Toast.LENGTH_SHORT).show();
+                        }
+                        avObject.put("pic", file);
+                    }
                     avObject.saveInBackground(new SaveCallback() {// 保存到服务端
                         @Override
                         public void done(AVException e) {
@@ -176,6 +204,7 @@ public class EventLab {
                                 // 存储成功
                                 // 保存成功之后，objectId 会自动从服务端加载到本地
                             } else {
+                                Log.d(TAG, "done: " + e.getMessage());
                                 Toast.makeText(mContext,"网络异常，请稍后",Toast.LENGTH_SHORT).show();
                                 // 失败的话，请检查网络环境以及 SDK 配置是否正确
                             }
@@ -186,5 +215,46 @@ public class EventLab {
                 }
             }
         });
+    }
+
+    public static void getPic(String id, final Handler handler){
+//        final AVObject event = AVObject.createWithoutData("Event", id);
+//        event.fetchInBackground(new GetCallback<AVObject>() {
+//            AVFile pic =null;
+//            @Override
+//            public void done(AVObject object, AVException e) {
+//                if (e == null){
+//                    pic = object.getAVFile("pic");
+//                    Message message = new Message();
+//                    message.what = 0;
+//                    message.obj = pic;
+//                    handler.sendMessage(message);
+//                }else {
+//                    Toast.makeText(mContext,"加载不到图片",Toast.LENGTH_SHORT).show();
+//                }
+//
+//            }
+//        });
+
+        AVQuery<AVObject> query = new AVQuery<>("Event");
+        query.whereEqualTo("objectId", id);
+        query.include("pic");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null)
+                {
+
+                    Message message = new Message();
+                    message.what = 0;
+                    message.obj = list.get(0).getAVFile("pic").getUrl();
+                    handler.sendMessage(message);
+                }
+                else {
+                    Toast.makeText(mContext,"加载不到图片",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
     }
 }

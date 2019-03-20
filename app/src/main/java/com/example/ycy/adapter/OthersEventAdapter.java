@@ -1,6 +1,7 @@
 package com.example.ycy.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.ycy.R;
+import com.example.ycy.activity.EditActivity;
 import com.example.ycy.bean.Event;
 
 import java.text.DateFormat;
@@ -62,16 +64,23 @@ public class OthersEventAdapter extends RecyclerView.Adapter {
         void bind(Event event){
             Date creatTime = event.getCreatTime();
             this.event = event;
-            eventTitle.setText(event.getTitle());
+            eventTitle.setText("标题：" + event.getTitle());
             String detail = event.getDetail();
             if (detail.length() > 50)
                 detail = detail.substring(0,50) + "。。。";
-            eventDetail.setText(detail);
+            eventDetail.setText("内容：" + detail);
             eventCreateTime.setText("发表于：" + dateFormat.format(creatTime));
         }
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent(context, EditActivity.class);
+            intent.putExtra(EditActivity.TYPE,EditActivity.TYPE_VIEW);
+            intent.putExtra("id",event.getId());
+            intent.putExtra("title",event.getTitle());
+            intent.putExtra("detail", event.getDetail());
+            intent.putExtra("isopen",event.isOpen());
+            intent.putExtra("owner",event.getOwner());
+            context.startActivity(intent);
         }
     }
 }

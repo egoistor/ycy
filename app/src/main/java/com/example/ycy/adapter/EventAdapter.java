@@ -68,11 +68,11 @@ public class EventAdapter extends RecyclerView.Adapter {
         void bind(Event event){
             Date creatTime = event.getCreatTime();
             this.event = event;
-            eventTitle.setText(event.getTitle());
+            eventTitle.setText("标题：" + event.getTitle());
             String detail = event.getDetail();
             if (detail.length() > 50)
                 detail = detail.substring(0,50) + "。。。";
-            eventDetail.setText(detail);
+            eventDetail.setText("内容：" + detail);
             eventCreateTime.setText("发表于：" + dateFormat.format(creatTime));
         }
         @Override
