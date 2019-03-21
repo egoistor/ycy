@@ -12,14 +12,23 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="140dp">
 
+
+        <TextView
+            android:id="@+id/event_poster"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="5dp"
+            android:text="aa aaaaaaaaaaaaaaaaaaaaaa" />
         <TextView
             android:id="@+id/event_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/event_poster"
             android:layout_margin="5dp"
             android:text="算法上机" />
 

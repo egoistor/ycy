@@ -73,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        mViewPager.setOffscreenPageLimit(3);
 
 
         //初始化底部导航

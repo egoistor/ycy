@@ -68,6 +68,7 @@ public class EventLab {
                                     AVObject avObject = avObjects.get(i);
                                     Event event = new Event(avObject.getObjectId(), avObject.getString("title"),
                                             avObject.getString("detail"), avObject.getDate("createdAt"), avObject.getBoolean("isopen"), (AVUser)avObject.getAVObject("owner"));
+                                    Log.d(TAG, "owner: " + (AVUser)avObject.getAVObject("owner"));
                                     mOthersEvents.add(event);
                                 }
                                 handler.sendEmptyMessage(0);
@@ -218,24 +219,6 @@ public class EventLab {
     }
 
     public static void getPic(String id, final Handler handler){
-//        final AVObject event = AVObject.createWithoutData("Event", id);
-//        event.fetchInBackground(new GetCallback<AVObject>() {
-//            AVFile pic =null;
-//            @Override
-//            public void done(AVObject object, AVException e) {
-//                if (e == null){
-//                    pic = object.getAVFile("pic");
-//                    Message message = new Message();
-//                    message.what = 0;
-//                    message.obj = pic;
-//                    handler.sendMessage(message);
-//                }else {
-//                    Toast.makeText(mContext,"加载不到图片",Toast.LENGTH_SHORT).show();
-//                }
-//
-//            }
-//        });
-
         AVQuery<AVObject> query = new AVQuery<>("Event");
         query.whereEqualTo("objectId", id);
         query.include("pic");
@@ -257,4 +240,31 @@ public class EventLab {
         });
 
     }
+
+    public static void getHead(String id, final Handler handler){
+        AVQuery<AVObject> query = new AVQuery<>("_User");
+        query.whereEqualTo("objectId", id);
+        query.include("pic");
+        query.findInBackground(new FindCallback<AVObject>() {
+            @Override
+            public void done(List<AVObject> list, AVException e) {
+                if (e == null)
+                {
+                    Message message = new Message();
+                    message.what = 0;
+                    message.obj = list.get(0).getAVFile("pic").getUrl();
+                    handler.sendMessage(message);
+                }
+                else {
+                    Log.d(TAG, "done: " + e.getMessage());
+                    Toast.makeText(mContext,"加载不到图片",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+    }
+
+
+
+
 }

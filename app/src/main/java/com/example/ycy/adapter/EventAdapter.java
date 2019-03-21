@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.avos.avoscloud.AVObject;
 import com.avos.avoscloud.AVUser;
 import com.example.ycy.R;
 import com.example.ycy.activity.EditActivity;
@@ -56,6 +58,7 @@ public class EventAdapter extends RecyclerView.Adapter {
         private TextView eventTitle;
         private TextView eventDetail;
         private TextView eventCreateTime;
+        private TextView eventIsOpen;
         private Event event;
         public EventHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.event_item,parent,false));
@@ -63,6 +66,7 @@ public class EventAdapter extends RecyclerView.Adapter {
             eventTitle = itemView.findViewById(R.id.event_title);
             eventDetail = itemView.findViewById(R.id.event_detail);
             eventCreateTime = itemView.findViewById(R.id.event_createtime);
+            eventIsOpen = itemView.findViewById(R.id.event_isopen);
         }
 
         void bind(Event event){
@@ -74,6 +78,12 @@ public class EventAdapter extends RecyclerView.Adapter {
                 detail = detail.substring(0,50) + "。。。";
             eventDetail.setText("内容：" + detail);
             eventCreateTime.setText("发表于：" + dateFormat.format(creatTime));
+            if (event.isOpen()){
+                eventIsOpen.setText(Html.fromHtml("是否公开：<font color='#ce3c3d'>是</font>"));
+            }else {
+                eventIsOpen.setText("是否公开：否");
+            }
+
         }
         @Override
         public void onClick(View v) {

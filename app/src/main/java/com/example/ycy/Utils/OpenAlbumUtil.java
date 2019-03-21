@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 
 public class OpenAlbumUtil {
@@ -22,6 +23,14 @@ public class OpenAlbumUtil {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         context.startActivityForResult(intent, PHOTO_FROM_GALLERY);
     }
+
+    public static void openAlbum(Fragment context){
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        context.startActivityForResult(intent, PHOTO_FROM_GALLERY);
+    }
+
 
     @TargetApi(19)
     public static String handleImageOnKitKat(Activity activity,Intent data) {

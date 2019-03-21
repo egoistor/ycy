@@ -3,6 +3,7 @@ package com.example.ycy.activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Image;
 import android.os.CountDownTimer;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVException;
@@ -28,6 +30,7 @@ public class RegisterActivity extends BaseActivity {
     Button regisetButton;
     TextInputLayout passwordLayout;
     TextInputLayout checkPasswordLayout;
+    ImageView mBackImage;
     String usernameText = "";
     String phoneNumberText = "";
     String passwordText = "";
@@ -50,8 +53,14 @@ public class RegisterActivity extends BaseActivity {
         regisetButton = findViewById(R.id.register_register_button);
         passwordLayout = findViewById(R.id.register_passwordLayout);
         checkPasswordLayout = findViewById( R.id.register_checkPasswordLayout);
+        mBackImage = findViewById(R.id.back_image);
 
-
+        mBackImage.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
         username.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

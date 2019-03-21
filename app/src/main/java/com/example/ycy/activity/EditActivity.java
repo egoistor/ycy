@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.avos.avoscloud.AVFile;
@@ -45,6 +46,8 @@ import com.example.ycy.utils.OpenAlbumUtil;
 import com.example.ycy.utils.ShowPopUtil;
 import com.example.ycy.utils.SoftKeyboardUtil;
 
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +71,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
     private Button mDeleButton;
     private EditText mEditTitle;
     private EditText mEditDetail;
+    private TextView posterName;
     private SwitchCompat mSwitch;
     public static String EXTRA_EVENT = "EXTRA_EVENT";
     public static String TYPE = "type";
@@ -97,18 +101,31 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
         mEditTitle = findViewById(R.id.activity_edit_edittitle);
         mEditDetail = findViewById(R.id.activity_edit_editdetail);
         mPic = findViewById(R.id.edit_pic);
-
+        posterName = findViewById(R.id.postername);
         mPic.setVisibility(View.GONE);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
+        imageView.setOnClickListener(this);
+        mPic.setOnClickListener(this);
+
+
+        mBackButton.setOnClickListener(this);
+        mPostButton.setOnClickListener(this);
+        mDeleButton.setOnClickListener(this);
+
 
         if (currentType == TYPE_CHANGE || currentType == TYPE_VIEW){
             id = getIntent().getStringExtra("id");
             Intent intent = getIntent();
             Event event = new Event(intent.getStringExtra("id"),
-                                    intent.getStringExtra("title"),
-                                    intent.getStringExtra("detail"),
-                                    new Date(intent.getLongExtra("create",System.currentTimeMillis())),
-                                    intent.getBooleanExtra("isopen",false),
-                                    (AVUser) intent.getParcelableExtra("owner"));
+                    intent.getStringExtra("title"),
+                    intent.getStringExtra("detail"),
+                    new Date(intent.getLongExtra("create",System.currentTimeMillis())),
+                    intent.getBooleanExtra("isopen",false),
+                    (AVUser) intent.getParcelableExtra("owner"));
 
 
             mEditTitle.setText(event.getTitle());
@@ -122,23 +139,14 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
         if (currentType == TYPE_NEW){
             mDeleButton.setVisibility(View.GONE);
         }else if (currentType == TYPE_VIEW){
+            posterName.setText("发布人：" + getIntent().getStringExtra("postername"));
+            mEditTitle.setFocusable(false);
+            mEditDetail.setFocusable(false);
             mPostButton.setVisibility(View.GONE);
             mDeleButton.setVisibility(View.GONE);
             mPic.setClickable(false);
             imageView.setClickable(false);
         }
-
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.hide();
-        }
-        imageView.setOnClickListener(this);
-        mPic.setOnClickListener(this);
-
-
-        mBackButton.setOnClickListener(this);
-        mPostButton.setOnClickListener(this);
-        mDeleButton.setOnClickListener(this);
 
     }
 
@@ -338,7 +346,23 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
                 break;
             case R.id.gallery_button:
             case R.id.edit_pic:
-                OpenAlbumUtil.openAlbum(EditActivity.this);
+                ShowPopUtil.showPop(this,"相册", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        switch (view.getId()) {
+                            case R.id.tv_album:
+                                OpenAlbumUtil.openAlbum(EditActivity.this);
+                                break;
+                            case R.id.tv_cancel:
+                                //取消
+                                //closePopupWindow();
+                                break;
+                        }
+                        ShowPopUtil.closePopupWindow();
+                    }
+                });
+
                 break;
 
         }

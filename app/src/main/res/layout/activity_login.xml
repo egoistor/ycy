@@ -91,6 +91,7 @@
         android:background="@drawable/white_corner_button"/>
 
     <TextView
+        android:id="@+id/login_forgot_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

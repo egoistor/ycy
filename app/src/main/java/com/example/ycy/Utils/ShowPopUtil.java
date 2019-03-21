@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
@@ -75,6 +76,9 @@ public class ShowPopUtil {
         mAlbum.setOnClickListener(clickListener);
         mCancel.setOnClickListener(clickListener);
     }
+
+
+
 
     public static void closePopupWindow() {
         if (pop != null && pop.isShowing()) {
