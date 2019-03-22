@@ -56,6 +56,7 @@ public class EventLab {
         mOthersEvents.clear();
         AVQuery<AVObject> query = new AVQuery<>("Event");
         query.whereEqualTo("isopen",true);
+        query.orderByAscending("createdAt");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
@@ -91,6 +92,7 @@ public class EventLab {
         mEvents.clear();
         AVQuery<AVObject> query = new AVQuery<>("Event");
         query.whereEqualTo("owner",AVUser.getCurrentUser());
+        query.orderByAscending("createdAt");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
