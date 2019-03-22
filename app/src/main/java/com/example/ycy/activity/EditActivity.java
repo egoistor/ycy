@@ -73,6 +73,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
     private EditText mEditDetail;
     private TextView posterName;
     private SwitchCompat mSwitch;
+    private TextView mIsOpenText;
     public static String EXTRA_EVENT = "EXTRA_EVENT";
     public static String TYPE = "type";
     public static int TYPE_NEW = 0; //新建
@@ -103,7 +104,7 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
         mPic = findViewById(R.id.edit_pic);
         posterName = findViewById(R.id.postername);
         mPic.setVisibility(View.GONE);
-
+        mIsOpenText = findViewById(R.id.isopen_text);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
@@ -146,6 +147,8 @@ public class EditActivity extends BaseActivity implements View.OnClickListener {
             mDeleButton.setVisibility(View.GONE);
             mPic.setClickable(false);
             imageView.setClickable(false);
+            mSwitch.setVisibility(View.GONE);
+            mIsOpenText.setVisibility(View.GONE);
         }
 
     }

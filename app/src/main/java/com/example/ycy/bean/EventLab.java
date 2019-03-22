@@ -230,7 +230,9 @@ public class EventLab {
 
                     Message message = new Message();
                     message.what = 0;
-                    message.obj = list.get(0).getAVFile("pic").getUrl();
+                    AVFile avFile = list.get(0).getAVFile("pic");
+                    if (avFile != null)
+                    message.obj = avFile.getUrl();
                     handler.sendMessage(message);
                 }
                 else {
@@ -252,7 +254,10 @@ public class EventLab {
                 {
                     Message message = new Message();
                     message.what = 0;
-                    message.obj = list.get(0).getAVFile("pic").getUrl();
+                    AVFile avFile = list.get(0).getAVFile("pic");
+                    if (avFile != null)
+                    message.obj = avFile.getUrl();
+
                     handler.sendMessage(message);
                 }
                 else {

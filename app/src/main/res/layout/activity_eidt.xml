@@ -116,6 +116,7 @@
             android:layout_alignParentRight="true">
 
             <TextView
+                android:id="@+id/isopen_text"
                 android:text="是否公开"
                 android:layout_toStartOf="@+id/activity_edit_isopen_btn"
                 android:layout_width="wrap_content"
