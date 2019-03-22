@@ -20,6 +20,8 @@ import com.avos.avoscloud.SaveCallback;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -72,6 +74,12 @@ public class EventLab {
                                     Log.d(TAG, "owner: " + (AVUser)avObject.getAVObject("owner"));
                                     mOthersEvents.add(event);
                                 }
+                                Collections.sort(mOthersEvents, new Comparator<Event>() {
+                                    @Override
+                                    public int compare(Event o1, Event o2) {
+                                        return o2.getCreatTime().compareTo(o1.getCreatTime()) ;
+                                    }
+                                });
                                 handler.sendEmptyMessage(0);
                                 Log.d(TAG, "others: " + mOthersEvents.size());
                             } else {
@@ -92,7 +100,6 @@ public class EventLab {
         mEvents.clear();
         AVQuery<AVObject> query = new AVQuery<>("Event");
         query.whereEqualTo("owner",AVUser.getCurrentUser());
-        query.orderByAscending("createdAt");
         query.findInBackground(new FindCallback<AVObject>() {
             @Override
             public void done(List<AVObject> list, AVException e) {
@@ -103,10 +110,17 @@ public class EventLab {
                             if (avException == null) {
                                 for (int i = 0; i < avObjects.size(); i++) {
                                     AVObject avObject = avObjects.get(i);
+                                    Log.d(TAG, "done: " + avObject.getDate("createdAt"));
                                     Event event = new Event(avObject.getObjectId(), avObject.getString("title"),
                                             avObject.getString("detail"), avObject.getDate("createdAt"), avObject.getBoolean("isopen"), AVUser.getCurrentUser());
                                     mEvents.add(event);
                                 }
+                                Collections.sort(mEvents, new Comparator<Event>() {
+                                    @Override
+                                    public int compare(Event o1, Event o2) {
+                                        return o2.getCreatTime().compareTo(o1.getCreatTime()) ;
+                                    }
+                                });
                                 handler.sendEmptyMessage(0);
                             } else {
                                 Toast.makeText(mContext, "网络异常，请稍后", Toast.LENGTH_SHORT).show();
